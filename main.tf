@@ -16,6 +16,10 @@ variable "secret_key" {
   default = ""
 }
 
+variable "key_name" {
+  default = ""
+}
+
 variable "ec2_ami" {
     default = "ami-05d72852800cbf29e"
 }
