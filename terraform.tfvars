@@ -1,0 +1,5 @@
+region      = "us-east-2"
+access_key  = ""
+secret_key  = ""
+# ec2_ami     = "ami-05d72852800cbf29e"
+# key_name = ""
