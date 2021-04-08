@@ -28,17 +28,18 @@ variable "vpc_cidr" {
   default = "10.0.0.0/16"
 }
 
+# https://stackoverflow.com/a/51741614
 variable "subnet_cidrs_public" {
   description = "Subnet CIDRs for public subnets (length must match configured availability_zones)"
   # this could be further simplified / computed using cidrsubnet() etc.
   # https://www.terraform.io/docs/configuration/interpolation.html#cidrsubnet-iprange-newbits-netnum-
-  default = ["10.0.10.0/24", "10.0.20.0/24", "10.0.30.0/24"]
+  default = ["10.0.10.0/24", "10.0.20.0/24"]
   type = list
 }
 
 variable "availability_zones" {
   description = "AZs in this region to use"
-  default = ["us-east-2a", "us-east-2b", "us-east-2c"]
+  default = ["us-east-2a", "us-east-2b"]
   type = list
 }
 
@@ -166,27 +167,3 @@ resource "aws_instance" "server-instance" {
 resource "aws_iam_service_linked_role" "es" {
   aws_service_name = "es.amazonaws.com"
 }
-
-module "elasticsearch" {
-  source  = "cloudposse/elasticsearch/aws"
-  version = "0.30.0"
-  namespace               = "eg"
-  stage                   = "prod"
-  name                    = "youtube"
-  security_groups         = [aws_security_group.allow_web.id]
-  vpc_id                  = aws_vpc.prod-vpc.id
-  subnet_ids              = slice(aws_subnet.public.*.id, 0, 2)
-  zone_awareness_enabled  = "true"
-  elasticsearch_version   = "7.9"
-  instance_type           = "t2.small.elasticsearch"
-  create_iam_service_linked_role = false
-  instance_count          = 4
-  ebs_volume_size         = 10
-  iam_role_arns           = ["*"]
-  iam_actions             = ["es:*"]
-  encrypt_at_rest_enabled = false
-  kibana_subdomain_name   = "kibana-es"
-  depends_on              = [aws_iam_service_linked_role.es]
-}
-
-
