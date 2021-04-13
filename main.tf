@@ -162,6 +162,7 @@ resource "aws_instance" "server-instance" {
         device_index = 0
         network_interface_id = aws_network_interface.server-nic.id
     }
+    depends_on = [aws_network_interface.server-nic]
 }
 
 resource "aws_iam_service_linked_role" "es" {
